@@ -6,9 +6,157 @@ import 'package:source_gen_test/annotations.dart';
 
 import 'query.pb.dart';
 
+enum FileType { mp4, mp3 }
+
+class Config {
+  final String date;
+  final String type;
+  final bool shouldReplace;
+  final Map<String, dynamic> subConfig;
+
+  const Config({
+    required this.date,
+    required this.type,
+    required this.shouldReplace,
+    required this.subConfig,
+  });
+}
+
+class DummyTypedExtras extends TypedExtras {
+  final String id;
+  final Config config;
+  final List<FileType> fileTypes;
+  final Set<String> sources;
+  final bool shouldProceed;
+  final bool? canFly;
+  const DummyTypedExtras({
+    required this.id,
+    required this.config,
+    required this.fileTypes,
+    required this.sources,
+    required this.shouldProceed,
+    this.canFly,
+  });
+}
+
 @ShouldGenerate(
   '''
-// ignore_for_file: unnecessary_brace_in_string_interps,no_leading_underscores_for_local_identifiers,unused_element
+    final _extra = <String, dynamic>{
+      'id': '1234',
+      'config': {
+        'date': '24-10-2024',
+        'type': 'analytics',
+        'shouldReplace': true,
+        'subConfig': {'date': '24-11-2025'},
+      },
+      'fileTypes': [
+        'mp3',
+        'mp4',
+      ],
+      'sources': {
+        'internet',
+        'local',
+      },
+      'shouldProceed': true,
+    };
+  ''',
+  contains: true,
+)
+@RestApi()
+abstract class TypedExtrasTest {
+  @DummyTypedExtras(
+    id: '1234',
+    config: Config(
+      date: '24-10-2024',
+      type: 'analytics',
+      shouldReplace: true,
+      subConfig: {'date': '24-11-2025'},
+    ),
+    fileTypes: [
+      FileType.mp3,
+      FileType.mp4,
+    ],
+    sources: {
+      'internet',
+      'local',
+    },
+    shouldProceed: true,
+  )
+  @GET('path')
+  Future<void> list();
+}
+
+class AnotherDummyTypedExtras extends TypedExtras {
+  const AnotherDummyTypedExtras({
+    required this.peanutButter,
+    required this.mac,
+    required this.id,
+  });
+
+  final String peanutButter;
+  final String mac;
+  final String id;
+}
+
+@ShouldGenerate(
+  '''
+    final _extra = <String, dynamic>{
+      'bacon': 'sausage',
+      'id': '12345',
+      'config': {
+        'date': '24-10-2024',
+        'type': 'analytics',
+        'shouldReplace': true,
+        'subConfig': {'date': '24-11-2025'},
+      },
+      'fileTypes': [
+        'mp3',
+        'mp4',
+      ],
+      'sources': {
+        'internet',
+        'local',
+      },
+      'shouldProceed': true,
+      'peanutButter': 'Jelly',
+      'mac': 'Cheese',
+    };
+  ''',
+  contains: true,
+)
+@RestApi()
+abstract class MultipleTypedExtrasTest {
+  @DummyTypedExtras(
+    id: '1234',
+    config: Config(
+      date: '24-10-2024',
+      type: 'analytics',
+      shouldReplace: true,
+      subConfig: {'date': '24-11-2025'},
+    ),
+    fileTypes: [
+      FileType.mp3,
+      FileType.mp4,
+    ],
+    sources: {
+      'internet',
+      'local',
+    },
+    shouldProceed: true,
+  )
+  @AnotherDummyTypedExtras(
+    peanutButter: 'Jelly',
+    mac: 'Cheese',
+    id: '12345',
+  )
+  @Extra({'bacon': 'sausage'})
+  @GET('path')
+  Future<void> list();
+}
+
+@ShouldGenerate(
+  '''
+// ignore_for_file: unnecessary_brace_in_string_interps,no_leading_underscores_for_local_identifiers,unused_element,unnecessary_string_interpolations
 
 class _RestClient implements RestClient {
   _RestClient(

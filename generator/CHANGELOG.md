@@ -1,5 +1,88 @@
 # Changelog
 
+## 9.1.5
+
+- Add support for nested object of non-primitive types in `TypedExtras`.
+
+  Example :
+
+  ```dart
+  @RestApi()
+  abstract class TypedExtrasTest {
+    @DummyTypedExtras(
+      id: '1234',
+      config: Config(
+        date: '24-10-2024',
+        type: 'analytics',
+        shouldReplace: true,
+        subConfig: {'date': '24-11-2025'},
+      ),
+    )
+    @GET('path')
+    Future<void> list();
+  }
+  ```
+
+## 9.1.3
+
+- Add support for multiple `TypedExtras`.
+
+  Example :
+
+  ```dart
+  @TypedExtrasSubClass(
+    id: 'abcd',
+    fileType: FileType.json,
+    destinations: [Destination.remote]
+  )
+  @AnotherTypedExtrasSubClass(
+    state: 'Ohio',
+    destinations: [Destination.remote]
+  )
+  @http.POST('/path/')
+  Future<String> myMethod();
+  ```
+  
+## 9.1.2
+
+- Support passing Enums into `TypedExtras`.
+
+  Example :
+
+  ```dart
+  @TypedExtrasSubClass(
+    id: 'abcd',
+    fileType: FileType.json,
+    destinations: [Destination.remote]
+  )
+  @http.POST('/path/')
+  Future<String> myMethod();
+  ```
+
+## 9.1.0
+
+- Added `@TypedExtras` to pass extra options to dio requests using custom annotations.
+
+  Example :
+
+  ```dart
+  @TypedExtrasSubClass(
+    id: 'abcd',
+    count: 5,
+    shouldProceed: true,
+  )
+  @http.POST('/path/')
+  Future<String> myMethod(@Extras() Map<String, dynamic> extras);
+  ```
+
+## 9.0.0
+
+- Require Dart 3.3
+- Fix issue with deprecated `getDisplayString(withNullability: true)`
+- Update `analyzer: ^6.5.0`
+- Update `lints: ^4.0.0` and fix issues
+- Remove `tuple` dependency
+
 ## 8.1.0
 
 - Added `@Extras` to pass extra options to dio requests, response, transformer and interceptors.
